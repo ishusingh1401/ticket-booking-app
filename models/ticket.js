@@ -15,6 +15,10 @@ const ticketSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',
     },
+    isBooked: { 
+        type: Boolean, 
+        default: true 
+    },
 });
 
 const Ticket = mongoose.model('ticket', ticketSchema);

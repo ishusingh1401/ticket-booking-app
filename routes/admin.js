@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const httpStatus = require('http-status');
+const {auth, adminCheck} = require('../utils')
 
 
 router.post('/login', async (req, res) => {
@@ -80,9 +81,22 @@ router.post('/signup', async (req, res) => {
     }
 })
 
-router.post('/reset', (req, res) => {
-    // TODO: Implement Reset
-    res.send('Reset Done');    
+router.post('/reset', [auth, adminCheck], async (req, res) => {
+    try {
+        await Ticket.updateMany({}, {
+            $set: {
+                isBooked: false
+            }
+        });
+
+        return res.status(httpStatus.OK).json({
+            "message":"Successfully reset all seats."
+        });
+    } catch (e) {
+        console.error('Error recieved', e);
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR)
+            .send('Internal Server Error');
+    }
 })
 
 module.exports = router;
